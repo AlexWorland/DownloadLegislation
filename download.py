@@ -1,20 +1,15 @@
 import os
-import threading
+from multiprocessing import Pool
+
 
 def main():
     with open('legislationWebsites.txt', 'r') as f:
         # download every line in the file using multithreading
-        threads = []
-        for line in f:
-            t = threading.Thread(target=download, args=(line,))
-            threads.append(t)
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
-
+        with Pool(100) as p:
+            p.map(download, f.readlines())
+        
 def download(line):
-    os.system('wget -l inf -r -np -k -p -nc --no-check-certificate ' + line)        
+    os.system('wget -l inf -r -np -k -p -nc --no-check-certificate -P /Volumes/NetBackup/legislation/ ' + line)        
 
 if __name__ == '__main__':
     main()
